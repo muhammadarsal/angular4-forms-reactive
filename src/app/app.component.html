@@ -1,29 +1,76 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
-      <form>
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            class="form-control">
-        </div>
-        <div class="form-group">
-          <label for="email">email</label>
-          <input
-            type="text"
-            id="email"
-            class="form-control">
+
+      <!-- to sunchronize html form with form group in our ts code
+        we need to bind formGroup to our FormGroup property in ts code(in
+        this case signupForm) -->
+
+      <!-- unlike TD approach we don't need to pass reference to this 
+        form to our ts code because we already have it there (we created
+        the form in ts code) -->
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+
+        <div formGroupName="userdata">
+          <div class="form-group">
+            <label for="username">Username</label>
+
+            <!-- formControlName here is connecting this input
+            to the control with key 'username' in our form group -->
+            <input
+              type="text" 
+              id="username"
+              class="form-control"
+              formControlName="username">
+            <span
+              *ngIf="!signupForm.get('userdata.username').valid && signupForm.get('userdata.username').touched"
+              class="help-block">
+                Please enter a valid username!
+            </span>
+          </div>
+          <div class="form-group">
+            <label for="email">email</label>
+            <input
+              type="text"
+              id="email"
+              class="form-control"
+              formControlName="email">
+            <span
+              *ngIf="!signupForm.get('userdata.email').valid && signupForm.get('userdata.email').touched"
+              class="help-block">
+                Please enter a valid email!
+            </span>
+          </div>
         </div>
         <div class="radio" *ngFor="let gender of genders">
           <label>
             <input
               type="radio"
+              formControlName="gender"
               [value]="gender">{{ gender }}
           </label>
         </div>
-        <button class="btn btn-primary" type="submit">Submit</button>
+        <div formArrayName="hobbies">
+          <h4>Your Hobbies</h4>
+          <!-- making this button of type button so it may not accidently
+            submit the whole form -->
+          <button class="btn btn-default" type="button" (click)="onAddHobby()">Add Hobby</button>
+          <div
+            class="form-group"
+            *ngFor="let hobbyControl of signupForm.get('hobbies').controls; let i = index">
+              <input type="text" class="form-control" [formControlName]="i">
+          </div>
+        </div>
+        <span
+          *ngIf="!signupForm.valid && signupForm.touched"
+          class="help-block">
+            Please enter valid data!
+        </span>
+        <button
+          class="btn btn-primary"
+          type="submit">
+            Submit
+        </button>
       </form>
     </div>
   </div>
